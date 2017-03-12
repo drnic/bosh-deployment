@@ -13,5 +13,37 @@ To compare the `bosh.yml` and `bosh-lite.yml` for `bosh2 interpolate` and `spruc
 The output will look like:
 
 ```
+merging bosh.yml bosh-lite.yml
 both files are semantically equivalent; no differences found!
+
+merging bosh.yml vsphere/cpi.yml
+  $.cloud_provider.properties.vcenter.datacenters[Interxion MAD2].clusters[0] changed type
+    from scalar
+      to map
+
+  $.instance_groups[bosh].properties.vcenter.datacenters[Interxion MAD2].clusters[0] changed type
+    from scalar
+      to map
+```
+
+In our vsphere manifests we have:
+
+```
+cloud_provider:
+  properties:
+    vcenter:
+      datacenters:
+      - clusters:
+        - cluster1
+```
+
+But in `bosh-deployment/vsphere/cpi.yml` it is:
+
+```
+cloud_provider:
+  properties:
+    vcenter:
+      datacenters:
+      - clusters:
+        - cluster1: {}
 ```

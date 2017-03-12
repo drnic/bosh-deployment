@@ -1,0 +1,57 @@
+---
+releases:
+- name: bosh-vsphere-cpi
+  version: 34
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=34
+  sha1: 6a4e6d05a4b50c3d4fa53bda1d5d552f5899f1a6
+
+resource_pools:
+- name: vms
+  stemcell:
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3312.15
+    sha1: 60b8230da19d7e27b5101fc34f569e85eb5b3ad0
+  cloud_properties:
+    cpu: 2
+    ram: 4_096
+    disk: 20_000
+
+networks:
+- name: default
+  subnets:
+  - (( replace ))
+  - range: (( grab internal_cidr ))
+    gateway: (( grab internal_gw ))
+    static: [(( grab internal_ip ))]
+    dns: [8.8.8.8]
+    cloud_properties:
+      name: net-10-58-111-0
+
+instance_groups:
+- name: bosh
+  jobs:
+  - name: vsphere_cpi
+    release: bosh-vsphere-cpi
+  properties:
+    director:
+      cpi_job: vsphere_cpi
+    vcenter: &vcenter
+      address: (( grab vcenter_ip ))
+      user: (( grab vcenter_user ))
+      password: (( grab vcenter_password ))
+      datacenters:
+      - name: (( grab vcenter_dc ))
+        vm_folder: (( grab vcenter_vms ))
+        template_folder: (( grab vcenter_templates ))
+        datastore_pattern: (( grab vcenter_ds ))
+        persistent_datastore_pattern: (( grab vcenter_ds ))
+        disk_path: (( grab vcenter_disks ))
+        clusters:
+        - (( grab vcenter_cluster ))
+
+
+cloud_provider:
+  template:
+    name: vsphere_cpi
+    release: bosh-vsphere-cpi
+  properties:
+    vcenter: (( grab instance_groups.bosh.properties.vcenter ))
