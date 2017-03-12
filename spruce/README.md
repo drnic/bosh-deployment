@@ -47,3 +47,14 @@ cloud_provider:
       - clusters:
         - cluster1: {}
 ```
+
+## Comparisons
+
+One silly metric of readability might be number of lines:
+
+```
+$ wc bosh-lite.yml
+      87     164    2543 bosh-lite.yml
+$ wc spruce/bosh-lite.yml
+      57     124    1953 spruce/bosh-lite.yml
+```
