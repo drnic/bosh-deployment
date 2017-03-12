@@ -58,3 +58,53 @@ $ wc bosh-lite.yml
 $ wc spruce/bosh-lite.yml
       57     124    1953 spruce/bosh-lite.yml
 ```
+
+A better one is to compare two equivalent parts of the files.
+
+In `bosh-lite.yml` we want to add three releases. In the `spruce/bosh-lite.yml` this is as clean as:
+
+```yaml
+releases:
+  - name: bosh-warden-cpi
+    version: 34
+    url: ...
+    sha1: 536...
+  - name: garden-linux
+    version: 0.342.0
+    url: ...
+    sha1: 607...
+  - name: os-conf
+    version: 11
+    url: ...
+    sha1: 651...
+```
+
+New items to an array are merged into the existing array.
+
+Compared to the go-patch syntax:
+
+```yaml
+- type: replace
+  path: /releases/-
+  value:
+    name: bosh-warden-cpi
+    version: 34
+    url: ...
+    sha1: 536...
+
+- type: replace
+  path: /releases/-
+  value:
+    name: garden-linux
+    version: 0.342.0
+    url: ...
+    sha1: 607...
+
+- type: replace
+  path: /releases/name=os-conf?
+  value:
+    name: os-conf
+    version: 11
+    url: ...
+    sha1: 651...
+```
